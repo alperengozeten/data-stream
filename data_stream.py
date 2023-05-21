@@ -1,4 +1,6 @@
 import pickle
+import numpy as np
+import pandas as pd
 from os import path
 from skmultiflow.data import AGRAWALGenerator
 from skmultiflow.data import SEAGenerator
@@ -36,6 +38,22 @@ print(seaBatch[0].shape)
 
 seaData = seaBatch[0]
 seaLabels = seaBatch[1]
+
+# load the spam dataset
+spamDataset = pd.read_csv(path.join('data', 'spam.csv'))
+spamDataset = spamDataset.to_numpy()
+spamData = spamDataset[:, :-1]
+spamLabels = spamDataset[:, -1]
+print(spamData.shape)
+print(spamLabels.shape)
+
+# load the electricity dataset
+elecDataset = pd.read_csv(path.join('data', 'elec.csv'))
+elecDataset = elecDataset.to_numpy()
+elecData = elecDataset[:, :-1]
+elecLabels = elecDataset[:, -1]
+print(elecData.shape)
+print(elecLabels.shape)
 
 '''
 arf = AdaptiveRandomForestClassifier()
