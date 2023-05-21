@@ -6,6 +6,7 @@ from skmultiflow.data import AGRAWALGenerator
 from skmultiflow.data import SEAGenerator
 from skmultiflow.meta import AdaptiveRandomForestClassifier
 from skmultiflow.meta import StreamingRandomPatchesClassifier
+from skmultiflow.meta import DynamicWeightedMajorityClassifier
 from skmultiflow.lazy import SAMKNNClassifier
 from sklearn.metrics import accuracy_score
 
@@ -64,11 +65,28 @@ for i in range(20):
     print(f'Accuracy of Batch {i + 1}: {acc}')
     arf.partial_fit(X, y)'''
 
-
+'''
 sam = SAMKNNClassifier()
 for i in range(20):
     X, y = seaData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], seaLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
     y_pred = sam.predict(X)
     acc = accuracy_score(y, y_pred)
     print(f'Accuracy of Batch {i + 1}: {acc}')
-    sam.partial_fit(X, y)
+    sam.partial_fit(X, y)'''
+
+srp = StreamingRandomPatchesClassifier(random_state=2023)
+for i in range(20):
+    X, y = seaData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], seaLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
+    y_pred = srp.predict(X)
+    acc = accuracy_score(y, y_pred)
+    print(f'Accuracy of Batch {i + 1}: {acc}')
+    srp.partial_fit(X, y)
+
+'''
+dwm = DynamicWeightedMajorityClassifier()
+for i in range(20):
+    X, y = seaData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], seaLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
+    y_pred = dwm.predict(X)
+    acc = accuracy_score(y, y_pred)
+    print(f'Accuracy of Batch {i + 1}: {acc}')
+    dwm.partial_fit(X, y)'''
