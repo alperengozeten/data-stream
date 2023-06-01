@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from os import path
+from skmultiflow.data import ConceptDriftStream
 from skmultiflow.data import AGRAWALGenerator
 from skmultiflow.data import SEAGenerator
 from skmultiflow.meta import AdaptiveRandomForestClassifier
@@ -16,15 +17,24 @@ DATASET_SIZE = 100000
 agrawal_file_name = 'AGRAWALGenerator.pkl'
 sea_file_name = 'SEADataset.pkl'
 
-agrawalGenerator = AGRAWALGenerator(random_state=2023)
-agrawalBatch = agrawalGenerator.next_sample(DATASET_SIZE)
+agrawalConceptDriftStream1 = ConceptDriftStream(stream=AGRAWALGenerator(random_state=2023, classification_function=0), 
+                                        drift_stream=AGRAWALGenerator(random_state=2023, classification_function=1), position=25000)
+agrawalConceptDriftStream2 = ConceptDriftStream(stream=AGRAWALGenerator(random_state=2023, classification_function=2), 
+                                        drift_stream=AGRAWALGenerator(random_state=2023, classification_function=3), position=25000)
+agrawalConceptDriftStream = ConceptDriftStream(stream=agrawalConceptDriftStream1, drift_stream=agrawalConceptDriftStream2, position=50000, random_state=2023)
+agrawalBatch = agrawalConceptDriftStream.next_sample(DATASET_SIZE)
 
 with open(path.join('data', agrawal_file_name), 'wb') as file:
     pickle.dump(agrawalBatch, file)
     print(f'AGRAWAL Dataset saved to "{agrawal_file_name}"')
 
-seaGenerator = SEAGenerator(random_state=2023)
-seaBatch = seaGenerator.next_sample(DATASET_SIZE)
+seaConceptDriftStream1 = ConceptDriftStream(stream=SEAGenerator(random_state=2023, classification_function=0), 
+                                        drift_stream=SEAGenerator(random_state=2023, classification_function=1), position=25000)
+seaConceptDriftStream2 = ConceptDriftStream(stream=SEAGenerator(random_state=2023, classification_function=2), 
+                                        drift_stream=SEAGenerator(random_state=2023, classification_function=3), position=25000)
+seaConceptDriftStream = ConceptDriftStream(stream=seaConceptDriftStream1, 
+                                        drift_stream=seaConceptDriftStream2, position=50000, random_state=2023)
+seaBatch = seaConceptDriftStream.next_sample(DATASET_SIZE)
 
 with open(path.join('data', sea_file_name), 'wb') as file:
     pickle.dump(seaBatch, file)
