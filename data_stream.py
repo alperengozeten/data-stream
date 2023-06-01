@@ -99,7 +99,7 @@ for i in range(20):
     arf_sea_hist.append(acc)
     arf.partial_fit(X, y)
 print(f'Overall Accuracy For The SEA Dataset: {arf_sea_correct / DATASET_SIZE}')
-arf_file.writelines(f'Overall Accuracy For The SEA Dataset: {arf_sea_correct / DATASET_SIZE}')
+arf_file.writelines(f'Overall Accuracy For The SEA Dataset: {arf_sea_correct / DATASET_SIZE}\n')
 plot_training(arf_sea_hist, title='ARF Classifier And SEA Dataset')
 
 arf = AdaptiveRandomForestClassifier(random_state=2023)
@@ -127,7 +127,7 @@ for i in range(20):
     arf_elec_hist.append(acc)
     arf.partial_fit(X, y)
 print(f'Overall Accuracy For The Electricity Dataset: {arf_elec_correct / ELEC_DATASET_SIZE}')
-arf_file.writelines(f'Overall Accuracy For The Electricity Dataset: {arf_elec_correct / ELEC_DATASET_SIZE}')
+arf_file.writelines(f'Overall Accuracy For The Electricity Dataset: {arf_elec_correct / ELEC_DATASET_SIZE}\n')
 plot_training(arf_elec_hist, title='ARF Classifier And Electricity Dataset')
 
 arf = AdaptiveRandomForestClassifier(random_state=2023)
@@ -169,7 +169,7 @@ for i in range(20):
     sam_sea_hist.append(acc)
     sam.partial_fit(X, y)
 print(f'Overall Accuracy For The SEA Dataset: {sam_sea_correct / DATASET_SIZE}')
-sam_file.writelines(f'Overall Accuracy For The SEA Dataset: {sam_sea_correct / DATASET_SIZE}')
+sam_file.writelines(f'Overall Accuracy For The SEA Dataset: {sam_sea_correct / DATASET_SIZE}\n')
 plot_training(sam_sea_hist, title='SAMKNN Classifier And SEA Dataset')
 
 sam = SAMKNNClassifier()
@@ -197,7 +197,7 @@ for i in range(20):
     sam_elec_hist.append(acc)
     sam.partial_fit(X, y)
 print(f'Overall Accuracy For The Electricity Dataset: {sam_elec_correct / ELEC_DATASET_SIZE}')
-sam_file.writelines(f'Overall Accuracy For The Electricity Dataset: {sam_elec_correct / ELEC_DATASET_SIZE}')
+sam_file.writelines(f'Overall Accuracy For The Electricity Dataset: {sam_elec_correct / ELEC_DATASET_SIZE}\n')
 plot_training(sam_elec_hist, title='SAMKNN Classifier And Electricity Dataset')
 
 sam = SAMKNNClassifier()
@@ -217,6 +217,7 @@ plot_training(sam_spam_hist, title='SAMKNN Classifier And Spam Dataset')'''
 
 '''
 StreamingRandomPatchesClassifier
+'''
 '''
 srp_sea_hist = []
 srp_sea_correct = 0
@@ -238,7 +239,7 @@ for i in range(20):
     srp_sea_hist.append(acc)
     srp.partial_fit(X, y)
 print(f'Overall Accuracy For The SEA Dataset: {srp_sea_correct / DATASET_SIZE}')
-srp_file.writelines(f'Overall Accuracy For The SEA Dataset: {srp_sea_correct / DATASET_SIZE}')
+srp_file.writelines(f'Overall Accuracy For The SEA Dataset: {srp_sea_correct / DATASET_SIZE}\n')
 plot_training(srp_sea_hist, title='StreamingRandomPatches Classifier And SEA Dataset')
 
 srp = StreamingRandomPatchesClassifier(random_state=2023)
@@ -266,7 +267,7 @@ for i in range(20):
     srp_elec_hist.append(acc)
     srp.partial_fit(X, y)
 print(f'Overall Accuracy For The Electricity Dataset: {srp_elec_correct / ELEC_DATASET_SIZE}')
-srp_file.writelines(f'Overall Accuracy For The Electricity Dataset: {srp_elec_correct / ELEC_DATASET_SIZE}')
+srp_file.writelines(f'Overall Accuracy For The Electricity Dataset: {srp_elec_correct / ELEC_DATASET_SIZE}\n')
 plot_training(srp_elec_hist, title='StreamingRandomPatches Classifier And Electricity Dataset')
 
 srp = StreamingRandomPatchesClassifier(random_state=2023)
@@ -282,11 +283,10 @@ for i in range(20):
     srp.partial_fit(X, y)
 print(f'Overall Accuracy For The Spam Dataset: {srp_spam_correct / SPAM_DATASET_SIZE}')
 srp_file.writelines(f'Overall Accuracy For The Spam Dataset: {srp_spam_correct / SPAM_DATASET_SIZE}\n')
-plot_training(srp_spam_hist, title='StreamingRandomPatches Classifier And Spam Dataset')
+plot_training(srp_spam_hist, title='StreamingRandomPatches Classifier And Spam Dataset')'''
 
 '''
 DynamicWeightedMajorityClassifier
-'''
 '''
 dwm_sea_hist = []
 dwm_sea_correct = 0
@@ -296,6 +296,7 @@ dwm_spam_hist = []
 dwm_spam_correct = 0
 dwm_elec_hist = []
 dwm_elec_correct = 0
+dwm_file = open(path.join('plot', 'dwm.txt'), 'w')
 
 dwm = DynamicWeightedMajorityClassifier()
 for i in range(20):
@@ -307,7 +308,8 @@ for i in range(20):
     dwm_sea_hist.append(acc)
     dwm.partial_fit(X, y)
 print(f'Overall Accuracy For The SEA Dataset: {dwm_sea_correct / DATASET_SIZE}')
-plot_training(dwm_sea_hist, title='DWM Classifier And SEA Dataset')
+dwm_file.writelines(f'Overall Accuracy For The SEA Dataset: {dwm_sea_correct / DATASET_SIZE}\n')
+plot_training(dwm_sea_hist, title='DynamicWeightedMajority Classifier And SEA Dataset')
 
 dwm = DynamicWeightedMajorityClassifier()
 for i in range(20):
@@ -319,28 +321,35 @@ for i in range(20):
     dwm_agrawal_hist.append(acc)
     dwm.partial_fit(X, y)
 print(f'Overall Accuracy For The AGRAWAL Dataset: {dwm_agrawal_correct / DATASET_SIZE}')
-plot_training(dwm_agrawal_hist, title='DWM Classifier And AGRAWAL Dataset')
+dwm_file.writelines(f'Overall Accuracy For The AGRAWAL Dataset: {dwm_agrawal_correct / DATASET_SIZE}\n')
+plot_training(dwm_agrawal_hist, title='DynamicWeightedMajority Classifier And AGRAWAL Dataset')
 
 dwm = DynamicWeightedMajorityClassifier()
 for i in range(20):
-    X, y = elecData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], elecLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
+    start_index = i * (ELEC_DATASET_SIZE // 20)
+    end_index = (i + 1) * (ELEC_DATASET_SIZE // 20) if i < 19 else ELEC_DATASET_SIZE
+    X, y = elecData[start_index : end_index, :], elecLabels[start_index : end_index]
     y_pred = dwm.predict(X)
     acc = accuracy_score(y, y_pred)
     dwm_elec_correct += np.sum(y == y_pred)
     print(f'Accuracy of Electricity Dataset Batch {i + 1}: {acc}')
     dwm_elec_hist.append(acc)
     dwm.partial_fit(X, y)
-print(f'Overall Accuracy For The Electricity Dataset: {dwm_elec_correct / DATASET_SIZE}')
-plot_training(dwm_elec_hist, title='DWM Classifier And Electricity Dataset')
+print(f'Overall Accuracy For The Electricity Dataset: {dwm_elec_correct / ELEC_DATASET_SIZE}')
+dwm_file.writelines(f'Overall Accuracy For The Electricity Dataset: {dwm_elec_correct / ELEC_DATASET_SIZE}\n')
+plot_training(dwm_elec_hist, title='DynamicWeightedMajority Classifier And Electricity Dataset')
 
 dwm = DynamicWeightedMajorityClassifier()
 for i in range(20):
-    X, y = spamData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], spamLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
+    start_index = i * (SPAM_DATASET_SIZE // 20)
+    end_index = (i + 1) * (SPAM_DATASET_SIZE // 20) if i < 19 else SPAM_DATASET_SIZE
+    X, y = spamData[start_index : end_index, :], spamLabels[start_index : end_index]
     y_pred = dwm.predict(X)
     acc = accuracy_score(y, y_pred)
     dwm_spam_correct += np.sum(y == y_pred)
     print(f'Accuracy of Spam Dataset Batch {i + 1}: {acc}')
     dwm_spam_hist.append(acc)
     dwm.partial_fit(X, y)
-print(f'Overall Accuracy For The Spam Dataset: {dwm_spam_correct / DATASET_SIZE}')
-plot_training(dwm_spam_hist, title='DWM Classifier And Spam Dataset')'''
+print(f'Overall Accuracy For The Spam Dataset: {dwm_spam_correct / SPAM_DATASET_SIZE}')
+dwm_file.writelines(f'Overall Accuracy For The Spam Dataset: {dwm_spam_correct / SPAM_DATASET_SIZE}\n')
+plot_training(dwm_spam_hist, title='DynamicWeightedMajority Classifier And Spam Dataset')
