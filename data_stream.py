@@ -1,6 +1,8 @@
 import pickle
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+
 from os import path
 from skmultiflow.data import AGRAWALGenerator
 from skmultiflow.data import SEAGenerator
@@ -37,8 +39,11 @@ with open(path.join('data', sea_file_name), 'rb') as file:
 print(agrawalBatch[0].shape)
 print(seaBatch[0].shape)
 
+# Get the dataset and labels
 seaData = seaBatch[0]
 seaLabels = seaBatch[1]
+agrawalData = agrawalBatch[0]
+agrawalLabels = agrawalBatch[1]
 
 # load the spam dataset
 spamDataset = pd.read_csv(path.join('data', 'spam.csv'))
@@ -55,6 +60,17 @@ elecData = elecDataset[:, :-1]
 elecLabels = elecDataset[:, -1]
 print(elecData.shape)
 print(elecLabels.shape)
+
+batchList = [k for k in range(1, 21)]
+def plot_training(hist, title='Train Classification Error vs The Window Number'):
+    plt.figure(figsize=(18, 12))
+    plt.xlabel('Window Number')
+    plt.ylabel('Training Accuracy')
+    plt.xticks(batchList)
+    plt.plot(batchList, hist, label='Train Classification Error')
+    plt.legend()
+    plt.title(title)
+    plt.show()
 
 '''
 arf = AdaptiveRandomForestClassifier()
@@ -74,19 +90,108 @@ for i in range(20):
     print(f'Accuracy of Batch {i + 1}: {acc}')
     sam.partial_fit(X, y)'''
 
+'''
+StreamingRandomPatchesClassifier
+'''
+'''
+srp_sea_hist = []
+srp_agrawal_hist = []
+srp_spam_hist = []
+srp_elec_hist = []
+
 srp = StreamingRandomPatchesClassifier(random_state=2023)
 for i in range(20):
     X, y = seaData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], seaLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
     y_pred = srp.predict(X)
     acc = accuracy_score(y, y_pred)
-    print(f'Accuracy of Batch {i + 1}: {acc}')
+    print(f'Accuracy of Sea Dataset Batch {i + 1}: {acc}')
+    srp_sea_hist.append(acc)
     srp.partial_fit(X, y)
 
+srp = StreamingRandomPatchesClassifier(random_state=2023)
+for i in range(20):
+    X, y = agrawalData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], agrawalLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
+    y_pred = srp.predict(X)
+    acc = accuracy_score(y, y_pred)
+    print(f'Accuracy of Agrawal Dataset Batch {i + 1}: {acc}')
+    srp_agrawal_hist.append(acc)
+    srp.partial_fit(X, y)
+
+srp = StreamingRandomPatchesClassifier(random_state=2023)
+for i in range(20):
+    X, y = elecData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], elecLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
+    y_pred = srp.predict(X)
+    acc = accuracy_score(y, y_pred)
+    print(f'Accuracy of Electricity Dataset Batch {i + 1}: {acc}')
+    srp_elec_hist.append(acc)
+    srp.partial_fit(X, y)
+
+srp = StreamingRandomPatchesClassifier(random_state=2023)
+for i in range(20):
+    X, y = spamData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], spamLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
+    y_pred = srp.predict(X)
+    acc = accuracy_score(y, y_pred)
+    print(f'Accuracy of Spam Dataset Batch {i + 1}: {acc}')
+    srp_spam_hist.append(acc)
+    srp.partial_fit(X, y)
 '''
+
+'''
+DynamicWeightedMajorityClassifier
+'''
+dwm_sea_hist = []
+dwm_sea_correct = 0
+dwm_agrawal_hist = []
+dwm_agrawal_correct = 0
+dwm_spam_hist = []
+dwm_spam_correct = 0
+dwm_elec_hist = []
+dwm_elec_correct = 0
+
 dwm = DynamicWeightedMajorityClassifier()
 for i in range(20):
     X, y = seaData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], seaLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
     y_pred = dwm.predict(X)
     acc = accuracy_score(y, y_pred)
-    print(f'Accuracy of Batch {i + 1}: {acc}')
-    dwm.partial_fit(X, y)'''
+    dwm_sea_correct += np.sum(y == y_pred)
+    print(f'Accuracy of SEA Dataset Batch {i + 1}: {acc}')
+    dwm_sea_hist.append(acc)
+    dwm.partial_fit(X, y)
+print(f'Overall Accuracy For The SEA Dataset: {dwm_sea_correct / DATASET_SIZE}')
+plot_training(dwm_sea_hist, title='DWM Classifier And SEA Dataset')
+
+dwm = DynamicWeightedMajorityClassifier()
+for i in range(20):
+    X, y = agrawalData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], agrawalLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
+    y_pred = dwm.predict(X)
+    acc = accuracy_score(y, y_pred)
+    dwm_agrawal_correct += np.sum(y == y_pred)
+    print(f'Accuracy of AGRAWAL Dataset Batch {i + 1}: {acc}')
+    dwm_agrawal_hist.append(acc)
+    dwm.partial_fit(X, y)
+print(f'Overall Accuracy For The AGRAWAL Dataset: {dwm_agrawal_correct / DATASET_SIZE}')
+plot_training(dwm_agrawal_hist, title='DWM Classifier And AGRAWAL Dataset')
+
+dwm = DynamicWeightedMajorityClassifier()
+for i in range(20):
+    X, y = elecData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], elecLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
+    y_pred = dwm.predict(X)
+    acc = accuracy_score(y, y_pred)
+    dwm_elec_correct += np.sum(y == y_pred)
+    print(f'Accuracy of Electricity Dataset Batch {i + 1}: {acc}')
+    dwm_elec_hist.append(acc)
+    dwm.partial_fit(X, y)
+print(f'Overall Accuracy For The Electricity Dataset: {dwm_elec_correct / DATASET_SIZE}')
+plot_training(dwm_elec_hist, title='DWM Classifier And Electricity Dataset')
+
+dwm = DynamicWeightedMajorityClassifier()
+for i in range(20):
+    X, y = spamData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], spamLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
+    y_pred = dwm.predict(X)
+    acc = accuracy_score(y, y_pred)
+    dwm_spam_correct += np.sum(y == y_pred)
+    print(f'Accuracy of Spam Dataset Batch {i + 1}: {acc}')
+    dwm_spam_hist.append(acc)
+    dwm.partial_fit(X, y)
+print(f'Overall Accuracy For The Spam Dataset: {dwm_spam_correct / DATASET_SIZE}')
+plot_training(dwm_spam_hist, title='DWM Classifier And Spam Dataset')
