@@ -50,6 +50,7 @@ spamDataset = pd.read_csv(path.join('data', 'spam.csv'))
 spamDataset = spamDataset.to_numpy()
 spamData = spamDataset[:, :-1]
 spamLabels = spamDataset[:, -1]
+SPAM_DATASET_SIZE = len(spamData)
 print(spamData.shape)
 print(spamLabels.shape)
 
@@ -58,6 +59,7 @@ elecDataset = pd.read_csv(path.join('data', 'elec.csv'))
 elecDataset = elecDataset.to_numpy()
 elecData = elecDataset[:, :-1]
 elecLabels = elecDataset[:, -1]
+ELEC_DATASET_SIZE = len(elecData)
 print(elecData.shape)
 print(elecLabels.shape)
 
@@ -70,16 +72,77 @@ def plot_training(hist, title='Train Classification Error vs The Window Number')
     plt.plot(batchList, hist, label='Train Classification Error')
     plt.legend()
     plt.title(title)
+    plt.savefig(path.join('plot', title + '.jpg'))
     plt.show()
 
 '''
-arf = AdaptiveRandomForestClassifier()
+AdaptiveRandomForestClassifier
+'''
+arf_sea_hist = []
+arf_sea_correct = 0
+arf_agrawal_hist = []
+arf_agrawal_correct = 0
+arf_spam_hist = []
+arf_spam_correct = 0
+arf_elec_hist = []
+arf_elec_correct = 0
+arf_file = open(path.join('plot', 'arf.txt'), 'w')
+
+arf = AdaptiveRandomForestClassifier(random_state=2023)
 for i in range(20):
     X, y = seaData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], seaLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
     y_pred = arf.predict(X)
     acc = accuracy_score(y, y_pred)
-    print(f'Accuracy of Batch {i + 1}: {acc}')
-    arf.partial_fit(X, y)'''
+    arf_sea_correct += np.sum(y == y_pred)
+    print(f'Accuracy of SEA Dataset Batch {i + 1}: {acc}')
+    arf_sea_hist.append(acc)
+    arf.partial_fit(X, y)
+print(f'Overall Accuracy For The SEA Dataset: {arf_sea_correct / DATASET_SIZE}')
+arf_file.writelines(f'Overall Accuracy For The SEA Dataset: {arf_sea_correct / DATASET_SIZE}')
+plot_training(arf_sea_hist, title='ARF Classifier And SEA Dataset')
+
+arf = AdaptiveRandomForestClassifier(random_state=2023)
+for i in range(20):
+    X, y = agrawalData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], agrawalLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
+    y_pred = arf.predict(X)
+    acc = accuracy_score(y, y_pred)
+    arf_agrawal_correct += np.sum(y == y_pred)
+    print(f'Accuracy of AGRAWAL Dataset Batch {i + 1}: {acc}')
+    arf_agrawal_hist.append(acc)
+    arf.partial_fit(X, y)
+print(f'Overall Accuracy For The AGRAWAL Dataset: {arf_agrawal_correct / DATASET_SIZE}')
+arf_file.writelines(f'Overall Accuracy For The AGRAWAL Dataset: {arf_agrawal_correct / DATASET_SIZE}\n')
+plot_training(arf_agrawal_hist, title='ARF Classifier And AGRAWAL Dataset')
+
+arf = AdaptiveRandomForestClassifier(random_state=2023)
+for i in range(20):
+    start_index = i * (ELEC_DATASET_SIZE // 20)
+    end_index = (i + 1) * (ELEC_DATASET_SIZE // 20) if i < 19 else ELEC_DATASET_SIZE
+    X, y = elecData[start_index : end_index, :], elecLabels[start_index : end_index]
+    y_pred = arf.predict(X)
+    acc = accuracy_score(y, y_pred)
+    arf_elec_correct += np.sum(y == y_pred)
+    print(f'Accuracy of Electricity Dataset Batch {i + 1}: {acc}')
+    arf_elec_hist.append(acc)
+    arf.partial_fit(X, y)
+print(f'Overall Accuracy For The Electricity Dataset: {arf_elec_correct / ELEC_DATASET_SIZE}')
+arf_file.writelines(f'Overall Accuracy For The Electricity Dataset: {arf_elec_correct / ELEC_DATASET_SIZE}')
+plot_training(arf_elec_hist, title='ARF Classifier And Electricity Dataset')
+
+arf = AdaptiveRandomForestClassifier(random_state=2023)
+for i in range(20):
+    start_index = i * (SPAM_DATASET_SIZE // 20)
+    end_index = (i + 1) * (SPAM_DATASET_SIZE // 20) if i < 19 else SPAM_DATASET_SIZE
+    X, y = spamData[start_index : end_index, :], spamLabels[start_index : end_index]
+    y_pred = arf.predict(X)
+    acc = accuracy_score(y, y_pred)
+    arf_spam_correct += np.sum(y == y_pred)
+    print(f'Accuracy of Spam Dataset Batch {i + 1}: {acc}')
+    arf_spam_hist.append(acc)
+    arf.partial_fit(X, y)
+print(f'Overall Accuracy For The Spam Dataset: {arf_spam_correct / SPAM_DATASET_SIZE}')
+arf_file.writelines(f'Overall Accuracy For The Spam Dataset: {arf_spam_correct / SPAM_DATASET_SIZE}\n')
+plot_training(arf_spam_hist, title='ARF Classifier And Spam Dataset')
 
 '''
 sam = SAMKNNClassifier()
@@ -139,6 +202,7 @@ for i in range(20):
 '''
 DynamicWeightedMajorityClassifier
 '''
+'''
 dwm_sea_hist = []
 dwm_sea_correct = 0
 dwm_agrawal_hist = []
@@ -194,4 +258,4 @@ for i in range(20):
     dwm_spam_hist.append(acc)
     dwm.partial_fit(X, y)
 print(f'Overall Accuracy For The Spam Dataset: {dwm_spam_correct / DATASET_SIZE}')
-plot_training(dwm_spam_hist, title='DWM Classifier And Spam Dataset')
+plot_training(dwm_spam_hist, title='DWM Classifier And Spam Dataset')'''
