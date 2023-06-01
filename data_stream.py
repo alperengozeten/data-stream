@@ -12,11 +12,13 @@ from skmultiflow.meta import StreamingRandomPatchesClassifier
 from skmultiflow.meta import DynamicWeightedMajorityClassifier
 from skmultiflow.lazy import SAMKNNClassifier
 from sklearn.metrics import accuracy_score
+from ensemble import EnsembleModel
 
 DATASET_SIZE = 100000
 agrawal_file_name = 'AGRAWALGenerator.pkl'
 sea_file_name = 'SEADataset.pkl'
 
+# AGRAWAL Stream With 3 Concept Drifts 
 agrawalConceptDriftStream1 = ConceptDriftStream(stream=AGRAWALGenerator(random_state=2023, classification_function=0), 
                                         drift_stream=AGRAWALGenerator(random_state=2023, classification_function=1), position=25000)
 agrawalConceptDriftStream2 = ConceptDriftStream(stream=AGRAWALGenerator(random_state=2023, classification_function=2), 
@@ -28,6 +30,7 @@ with open(path.join('data', agrawal_file_name), 'wb') as file:
     pickle.dump(agrawalBatch, file)
     print(f'AGRAWAL Dataset saved to "{agrawal_file_name}"')
 
+# SEA Stream With 3 Concept Drifts 
 seaConceptDriftStream1 = ConceptDriftStream(stream=SEAGenerator(random_state=2023, classification_function=0), 
                                         drift_stream=SEAGenerator(random_state=2023, classification_function=1), position=25000)
 seaConceptDriftStream2 = ConceptDriftStream(stream=SEAGenerator(random_state=2023, classification_function=2), 
@@ -84,6 +87,38 @@ def plot_training(hist, title='Train Classification Accuracy vs The Window Numbe
     plt.title(title)
     plt.savefig(path.join('plot', title + '.jpg'))
     plt.show()
+
+'''
+Ensemble Model
+'''
+'''
+ensemble_model = EnsembleModel(n_models=9)
+result = ensemble_model.predict(seaData)
+ensemble_sea_correct = 0
+ensemble_sea_hist = []
+for i in range(20):
+    X, y = seaData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], seaLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
+    y_pred = ensemble_model.predict(X)
+    acc = accuracy_score(y, y_pred)
+    ensemble_sea_correct += np.sum(y == y_pred)
+    print(f'Accuracy of SEA Dataset Batch {i + 1}: {acc}')
+    ensemble_sea_hist.append(acc)
+    ensemble_model.partial_fit(X, y)'''
+
+ensemble_model = EnsembleModel(n_models=9)
+result = ensemble_model.predict(seaData)
+ensemble_elec_correct = 0
+ensemble_elec_hist = []
+for i in range(20):
+    start_index = i * (ELEC_DATASET_SIZE // 20)
+    end_index = (i + 1) * (ELEC_DATASET_SIZE // 20) if i < 19 else ELEC_DATASET_SIZE
+    X, y = elecData[start_index : end_index, :], elecLabels[start_index : end_index]
+    y_pred = ensemble_model.predict(X)
+    acc = accuracy_score(y, y_pred)
+    ensemble_elec_correct += np.sum(y == y_pred)
+    print(f'Accuracy of SEA Dataset Batch {i + 1}: {acc}')
+    ensemble_elec_hist.append(acc)
+    ensemble_model.partial_fit(X, y, np.where(y_pred == y, 0, 1))
 
 '''
 AdaptiveRandomForestClassifier
