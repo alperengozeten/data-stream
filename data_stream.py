@@ -64,12 +64,12 @@ print(elecData.shape)
 print(elecLabels.shape)
 
 batchList = [k for k in range(1, 21)]
-def plot_training(hist, title='Train Classification Error vs The Window Number'):
+def plot_training(hist, title='Train Classification Accuracy vs The Window Number'):
     plt.figure(figsize=(18, 12))
     plt.xlabel('Window Number')
     plt.ylabel('Training Accuracy')
     plt.xticks(batchList)
-    plt.plot(batchList, hist, label='Train Classification Error')
+    plt.plot(batchList, hist, label='Train Classification Accuracy')
     plt.legend()
     plt.title(title)
     plt.savefig(path.join('plot', title + '.jpg'))
@@ -77,6 +77,7 @@ def plot_training(hist, title='Train Classification Error vs The Window Number')
 
 '''
 AdaptiveRandomForestClassifier
+'''
 '''
 arf_sea_hist = []
 arf_sea_correct = 0
@@ -142,16 +143,76 @@ for i in range(20):
     arf.partial_fit(X, y)
 print(f'Overall Accuracy For The Spam Dataset: {arf_spam_correct / SPAM_DATASET_SIZE}')
 arf_file.writelines(f'Overall Accuracy For The Spam Dataset: {arf_spam_correct / SPAM_DATASET_SIZE}\n')
-plot_training(arf_spam_hist, title='ARF Classifier And Spam Dataset')
+plot_training(arf_spam_hist, title='ARF Classifier And Spam Dataset')'''
 
 '''
+SAMKNNClassifier
+'''
+sam_sea_hist = []
+sam_sea_correct = 0
+sam_agrawal_hist = []
+sam_agrawal_correct = 0
+sam_spam_hist = []
+sam_spam_correct = 0
+sam_elec_hist = []
+sam_elec_correct = 0
+sam_file = open(path.join('plot', 'sam.txt'), 'w')
+
 sam = SAMKNNClassifier()
 for i in range(20):
     X, y = seaData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], seaLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
     y_pred = sam.predict(X)
     acc = accuracy_score(y, y_pred)
-    print(f'Accuracy of Batch {i + 1}: {acc}')
-    sam.partial_fit(X, y)'''
+    sam_sea_correct += np.sum(y == y_pred)
+    print(f'Accuracy of SEA Dataset Batch {i + 1}: {acc}')
+    sam_sea_hist.append(acc)
+    sam.partial_fit(X, y)
+print(f'Overall Accuracy For The SEA Dataset: {sam_sea_correct / DATASET_SIZE}')
+sam_file.writelines(f'Overall Accuracy For The SEA Dataset: {sam_sea_correct / DATASET_SIZE}')
+plot_training(sam_sea_hist, title='SAMKNN Classifier And SEA Dataset')
+
+sam = SAMKNNClassifier()
+for i in range(20):
+    X, y = agrawalData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], agrawalLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
+    y_pred = sam.predict(X)
+    acc = accuracy_score(y, y_pred)
+    sam_agrawal_correct += np.sum(y == y_pred)
+    print(f'Accuracy of AGRAWAL Dataset Batch {i + 1}: {acc}')
+    sam_agrawal_hist.append(acc)
+    sam.partial_fit(X, y)
+print(f'Overall Accuracy For The AGRAWAL Dataset: {sam_agrawal_correct / DATASET_SIZE}')
+sam_file.writelines(f'Overall Accuracy For The AGRAWAL Dataset: {sam_agrawal_correct / DATASET_SIZE}\n')
+plot_training(sam_agrawal_hist, title='SAMKNN Classifier And AGRAWAL Dataset')
+
+sam = SAMKNNClassifier()
+for i in range(20):
+    start_index = i * (ELEC_DATASET_SIZE // 20)
+    end_index = (i + 1) * (ELEC_DATASET_SIZE // 20) if i < 19 else ELEC_DATASET_SIZE
+    X, y = elecData[start_index : end_index, :], elecLabels[start_index : end_index]
+    y_pred = sam.predict(X)
+    acc = accuracy_score(y, y_pred)
+    sam_elec_correct += np.sum(y == y_pred)
+    print(f'Accuracy of Electricity Dataset Batch {i + 1}: {acc}')
+    sam_elec_hist.append(acc)
+    sam.partial_fit(X, y)
+print(f'Overall Accuracy For The Electricity Dataset: {sam_elec_correct / ELEC_DATASET_SIZE}')
+sam_file.writelines(f'Overall Accuracy For The Electricity Dataset: {sam_elec_correct / ELEC_DATASET_SIZE}')
+plot_training(sam_elec_hist, title='SAMKNN Classifier And Electricity Dataset')
+
+sam = SAMKNNClassifier()
+for i in range(20):
+    start_index = i * (SPAM_DATASET_SIZE // 20)
+    end_index = (i + 1) * (SPAM_DATASET_SIZE // 20) if i < 19 else SPAM_DATASET_SIZE
+    X, y = spamData[start_index : end_index, :], spamLabels[start_index : end_index]
+    y_pred = sam.predict(X)
+    acc = accuracy_score(y, y_pred)
+    sam_spam_correct += np.sum(y == y_pred)
+    print(f'Accuracy of Spam Dataset Batch {i + 1}: {acc}')
+    sam_spam_hist.append(acc)
+    sam.partial_fit(X, y)
+print(f'Overall Accuracy For The Spam Dataset: {sam_spam_correct / SPAM_DATASET_SIZE}')
+sam_file.writelines(f'Overall Accuracy For The Spam Dataset: {sam_spam_correct / SPAM_DATASET_SIZE}\n')
+plot_training(sam_spam_hist, title='SAMKNN Classifier And Spam Dataset')
 
 '''
 StreamingRandomPatchesClassifier
