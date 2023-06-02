@@ -1,4 +1,3 @@
-import os
 import pickle
 import numpy as np
 import pandas as pd
@@ -36,7 +35,7 @@ seaConceptDriftStream = ConceptDriftStream(stream=seaConceptDriftStream1,
                                         drift_stream=seaConceptDriftStream2, position=50000, random_state=2023)
 seaBatch = seaConceptDriftStream.next_sample(DATASET_SIZE)
 
-if os.path.exists(path.join('data', sea_file_name)):
+if path.exists(path.join('data', sea_file_name)):
     with open(path.join('data', sea_file_name), 'rb') as file:
         seaBatch = pickle.load(file)
         print(f'SEA Dataset Has Been Loaded!')
@@ -45,7 +44,7 @@ else:
         pickle.dump(seaBatch, file)
         print(f'SEA Dataset saved to "{sea_file_name}"')
 
-if os.path.exists(path.join('data', agrawal_file_name)):
+if path.exists(path.join('data', agrawal_file_name)):
     with open(path.join('data', agrawal_file_name), 'rb') as file:
         agrawalBatch = pickle.load(file)
         print(f'AGRAWAL Dataset Has Been Loaded!')
