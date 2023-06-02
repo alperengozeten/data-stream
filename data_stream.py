@@ -82,12 +82,26 @@ print(elecData.shape)
 print(elecLabels.shape)
 
 batchList = [k for k in range(1, 21)]
-def plot_training(hist, title='Train Classification Accuracy vs The Window Number'):
+def plot_training(hist, title='Prequential Accuracy vs Iterations'):
     plt.figure(figsize=(18, 12))
-    plt.xlabel('Window Number')
-    plt.ylabel('Training Accuracy')
+    plt.xlabel('Prequential Accuracy')
+    plt.ylabel('Prequential Accuracy')
     plt.xticks(batchList)
-    plt.plot(batchList, hist, label='Train Classification Accuracy')
+    plt.plot(batchList, hist, label='Prequential Accuracy')
+    plt.legend()
+    plt.title(title)
+    plt.savefig(path.join('plot', title + '.jpg'))
+    plt.show()
+
+def plot_all_datasets(sea_hist, agrawal_hist, elec_hist, spam_hist, title='Prequential Accuracy vs Iterations'):
+    plt.figure(figsize=(18, 12))
+    plt.xlabel('Prequential Accuracy')
+    plt.ylabel('Prequential Accuracy')
+    plt.xticks(batchList)
+    plt.plot(batchList, sea_hist, label='SEA')
+    plt.plot(batchList, agrawal_hist, label='AGRAWAL')
+    plt.plot(batchList, elec_hist, label='ELEC')
+    plt.plot(batchList, spam_hist, label='SPAM')
     plt.legend()
     plt.title(title)
     plt.savefig(path.join('plot', title + '.jpg'))
@@ -161,7 +175,13 @@ for i in range(20):
     arf_sea_correct += np.sum(y == y_pred)
     print(f'Accuracy of SEA Dataset Batch {i + 1}: {acc}')
     arf_sea_hist.append(acc)
-    arf.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        arf.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The SEA Dataset: {arf_sea_correct / DATASET_SIZE}')
 arf_file.writelines(f'Overall Accuracy For The SEA Dataset: {arf_sea_correct / DATASET_SIZE}\n')
 plot_training(arf_sea_hist, title='ARF Classifier And SEA Dataset')
@@ -174,7 +194,13 @@ for i in range(20):
     arf_agrawal_correct += np.sum(y == y_pred)
     print(f'Accuracy of AGRAWAL Dataset Batch {i + 1}: {acc}')
     arf_agrawal_hist.append(acc)
-    arf.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        arf.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The AGRAWAL Dataset: {arf_agrawal_correct / DATASET_SIZE}')
 arf_file.writelines(f'Overall Accuracy For The AGRAWAL Dataset: {arf_agrawal_correct / DATASET_SIZE}\n')
 plot_training(arf_agrawal_hist, title='ARF Classifier And AGRAWAL Dataset')
@@ -189,7 +215,13 @@ for i in range(20):
     arf_elec_correct += np.sum(y == y_pred)
     print(f'Accuracy of Electricity Dataset Batch {i + 1}: {acc}')
     arf_elec_hist.append(acc)
-    arf.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        arf.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The Electricity Dataset: {arf_elec_correct / ELEC_DATASET_SIZE}')
 arf_file.writelines(f'Overall Accuracy For The Electricity Dataset: {arf_elec_correct / ELEC_DATASET_SIZE}\n')
 plot_training(arf_elec_hist, title='ARF Classifier And Electricity Dataset')
@@ -204,10 +236,18 @@ for i in range(20):
     arf_spam_correct += np.sum(y == y_pred)
     print(f'Accuracy of Spam Dataset Batch {i + 1}: {acc}')
     arf_spam_hist.append(acc)
-    arf.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        arf.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The Spam Dataset: {arf_spam_correct / SPAM_DATASET_SIZE}')
 arf_file.writelines(f'Overall Accuracy For The Spam Dataset: {arf_spam_correct / SPAM_DATASET_SIZE}\n')
 plot_training(arf_spam_hist, title='ARF Classifier And Spam Dataset')
+
+plot_all_datasets(arf_sea_hist, arf_agrawal_hist, arf_elec_hist, arf_spam_hist, title="Adaptive Random Forest Classifier")
 
 '''
 SAMKNNClassifier
@@ -231,7 +271,13 @@ for i in range(20):
     sam_sea_correct += np.sum(y == y_pred)
     print(f'Accuracy of SEA Dataset Batch {i + 1}: {acc}')
     sam_sea_hist.append(acc)
-    sam.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        sam.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The SEA Dataset: {sam_sea_correct / DATASET_SIZE}')
 sam_file.writelines(f'Overall Accuracy For The SEA Dataset: {sam_sea_correct / DATASET_SIZE}\n')
 plot_training(sam_sea_hist, title='SAMKNN Classifier And SEA Dataset')
@@ -244,7 +290,13 @@ for i in range(20):
     sam_agrawal_correct += np.sum(y == y_pred)
     print(f'Accuracy of AGRAWAL Dataset Batch {i + 1}: {acc}')
     sam_agrawal_hist.append(acc)
-    sam.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        sam.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The AGRAWAL Dataset: {sam_agrawal_correct / DATASET_SIZE}')
 sam_file.writelines(f'Overall Accuracy For The AGRAWAL Dataset: {sam_agrawal_correct / DATASET_SIZE}\n')
 plot_training(sam_agrawal_hist, title='SAMKNN Classifier And AGRAWAL Dataset')
@@ -259,7 +311,13 @@ for i in range(20):
     sam_elec_correct += np.sum(y == y_pred)
     print(f'Accuracy of Electricity Dataset Batch {i + 1}: {acc}')
     sam_elec_hist.append(acc)
-    sam.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        sam.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The Electricity Dataset: {sam_elec_correct / ELEC_DATASET_SIZE}')
 sam_file.writelines(f'Overall Accuracy For The Electricity Dataset: {sam_elec_correct / ELEC_DATASET_SIZE}\n')
 plot_training(sam_elec_hist, title='SAMKNN Classifier And Electricity Dataset')
@@ -274,10 +332,18 @@ for i in range(20):
     sam_spam_correct += np.sum(y == y_pred)
     print(f'Accuracy of Spam Dataset Batch {i + 1}: {acc}')
     sam_spam_hist.append(acc)
-    sam.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        sam.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The Spam Dataset: {sam_spam_correct / SPAM_DATASET_SIZE}')
 sam_file.writelines(f'Overall Accuracy For The Spam Dataset: {sam_spam_correct / SPAM_DATASET_SIZE}\n')
 plot_training(sam_spam_hist, title='SAMKNN Classifier And Spam Dataset')
+
+plot_all_datasets(sam_sea_hist, sam_agrawal_hist, sam_elec_hist, sam_spam_hist, title="SAMKNN Forest Classifier")
 
 '''
 StreamingRandomPatchesClassifier
@@ -301,7 +367,13 @@ for i in range(20):
     srp_sea_correct += np.sum(y == y_pred)
     print(f'Accuracy of SEA Dataset Batch {i + 1}: {acc}')
     srp_sea_hist.append(acc)
-    srp.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        srp.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The SEA Dataset: {srp_sea_correct / DATASET_SIZE}')
 srp_file.writelines(f'Overall Accuracy For The SEA Dataset: {srp_sea_correct / DATASET_SIZE}\n')
 plot_training(srp_sea_hist, title='StreamingRandomPatches Classifier And SEA Dataset')
@@ -314,7 +386,13 @@ for i in range(20):
     srp_agrawal_correct += np.sum(y == y_pred)
     print(f'Accuracy of AGRAWAL Dataset Batch {i + 1}: {acc}')
     srp_agrawal_hist.append(acc)
-    srp.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        srp.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The AGRAWAL Dataset: {srp_agrawal_correct / DATASET_SIZE}')
 srp_file.writelines(f'Overall Accuracy For The AGRAWAL Dataset: {srp_agrawal_correct / DATASET_SIZE}\n')
 plot_training(srp_agrawal_hist, title='StreamingRandomPatches Classifier And AGRAWAL Dataset')
@@ -329,7 +407,13 @@ for i in range(20):
     srp_elec_correct += np.sum(y == y_pred)
     print(f'Accuracy of Electricity Dataset Batch {i + 1}: {acc}')
     srp_elec_hist.append(acc)
-    srp.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        srp.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The Electricity Dataset: {srp_elec_correct / ELEC_DATASET_SIZE}')
 srp_file.writelines(f'Overall Accuracy For The Electricity Dataset: {srp_elec_correct / ELEC_DATASET_SIZE}\n')
 plot_training(srp_elec_hist, title='StreamingRandomPatches Classifier And Electricity Dataset')
@@ -344,7 +428,13 @@ for i in range(20):
     srp_spam_correct += np.sum(y == y_pred)
     print(f'Accuracy of Spam Dataset Batch {i + 1}: {acc}')
     srp_spam_hist.append(acc)
-    srp.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        srp.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The Spam Dataset: {srp_spam_correct / SPAM_DATASET_SIZE}')
 srp_file.writelines(f'Overall Accuracy For The Spam Dataset: {srp_spam_correct / SPAM_DATASET_SIZE}\n')
 plot_training(srp_spam_hist, title='StreamingRandomPatches Classifier And Spam Dataset')
@@ -371,7 +461,13 @@ for i in range(20):
     dwm_sea_correct += np.sum(y == y_pred)
     print(f'Accuracy of SEA Dataset Batch {i + 1}: {acc}')
     dwm_sea_hist.append(acc)
-    dwm.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        dwm.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The SEA Dataset: {dwm_sea_correct / DATASET_SIZE}')
 dwm_file.writelines(f'Overall Accuracy For The SEA Dataset: {dwm_sea_correct / DATASET_SIZE}\n')
 plot_training(dwm_sea_hist, title='DynamicWeightedMajority Classifier And SEA Dataset')
@@ -384,7 +480,13 @@ for i in range(20):
     dwm_agrawal_correct += np.sum(y == y_pred)
     print(f'Accuracy of AGRAWAL Dataset Batch {i + 1}: {acc}')
     dwm_agrawal_hist.append(acc)
-    dwm.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        dwm.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The AGRAWAL Dataset: {dwm_agrawal_correct / DATASET_SIZE}')
 dwm_file.writelines(f'Overall Accuracy For The AGRAWAL Dataset: {dwm_agrawal_correct / DATASET_SIZE}\n')
 plot_training(dwm_agrawal_hist, title='DynamicWeightedMajority Classifier And AGRAWAL Dataset')
@@ -399,7 +501,13 @@ for i in range(20):
     dwm_elec_correct += np.sum(y == y_pred)
     print(f'Accuracy of Electricity Dataset Batch {i + 1}: {acc}')
     dwm_elec_hist.append(acc)
-    dwm.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        dwm.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The Electricity Dataset: {dwm_elec_correct / ELEC_DATASET_SIZE}')
 dwm_file.writelines(f'Overall Accuracy For The Electricity Dataset: {dwm_elec_correct / ELEC_DATASET_SIZE}\n')
 plot_training(dwm_elec_hist, title='DynamicWeightedMajority Classifier And Electricity Dataset')
@@ -414,7 +522,13 @@ for i in range(20):
     dwm_spam_correct += np.sum(y == y_pred)
     print(f'Accuracy of Spam Dataset Batch {i + 1}: {acc}')
     dwm_spam_hist.append(acc)
-    dwm.partial_fit(X, y)
+
+    # feed the data in 5 chunks
+    for j in range(5):
+        start_index = j * (len(X) // 5)
+        end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
+        X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
+        dwm.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The Spam Dataset: {dwm_spam_correct / SPAM_DATASET_SIZE}')
 dwm_file.writelines(f'Overall Accuracy For The Spam Dataset: {dwm_spam_correct / SPAM_DATASET_SIZE}\n')
 plot_training(dwm_spam_hist, title='DynamicWeightedMajority Classifier And Spam Dataset')
