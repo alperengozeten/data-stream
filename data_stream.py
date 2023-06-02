@@ -110,10 +110,19 @@ def plot_all_datasets(sea_hist, agrawal_hist, elec_hist, spam_hist, title='Prequ
 '''
 Ensemble Model
 '''
-'''
-ensemble_model = EnsembleModel(n_models=5)
-ensemble_sea_correct = 0
+print('============================')
 ensemble_sea_hist = []
+ensemble_sea_correct = 0
+ensemble_agrawal_hist = []
+ensemble_agrawal_correct = 0
+ensemble_spam_hist = []
+ensemble_spam_correct = 0
+ensemble_elec_hist = []
+ensemble_elec_correct = 0
+ensemble_file = open(path.join('plot', 'ensemble.txt'), 'w')
+
+# SEA DATASET
+ensemble_model = EnsembleModel(n_models=3)
 for i in range(20):
     start_index = i * (DATASET_SIZE // 20)
     end_index = (i + 1) * (DATASET_SIZE // 20) if i < 19 else DATASET_SIZE
@@ -121,13 +130,17 @@ for i in range(20):
     y_pred = ensemble_model.predict(X)
     acc = accuracy_score(y, y_pred)
     ensemble_sea_correct += np.sum(y == y_pred)
+
+    # Report and cache
     print(f'Accuracy of SEA Dataset Batch {i + 1}: {acc}')
     ensemble_sea_hist.append(acc)
     ensemble_model.partial_fit(X, y, np.where(y_pred == y, 0, 1))
+print(f'Overall Accuracy For The SEA Dataset: {ensemble_sea_correct / DATASET_SIZE}')
+ensemble_file.writelines(f'Overall Accuracy For The SEA Dataset: {ensemble_sea_correct / DATASET_SIZE}\n')
+plot_training(ensemble_sea_hist, title='Hoeffding Ensemble Classifier And SEA Dataset')
 
-ensemble_model = EnsembleModel(n_models=5)
-ensemble_agrawal_correct = 0
-ensemble_agrawal_hist = []
+# AGRAWAL DATASET
+ensemble_model = EnsembleModel(n_models=3)
 for i in range(20):
     start_index = i * (DATASET_SIZE // 20)
     end_index = (i + 1) * (DATASET_SIZE // 20) if i < 19 else DATASET_SIZE
@@ -135,13 +148,17 @@ for i in range(20):
     y_pred = ensemble_model.predict(X)
     acc = accuracy_score(y, y_pred)
     ensemble_agrawal_correct += np.sum(y == y_pred)
+
+    # Report and cache
     print(f'Accuracy of AGRAWAL Dataset Batch {i + 1}: {acc}')
     ensemble_agrawal_hist.append(acc)
     ensemble_model.partial_fit(X, y, np.where(y_pred == y, 0, 1))
+print(f'Overall Accuracy For The AGRAWAL Dataset: {ensemble_agrawal_correct / DATASET_SIZE}')
+ensemble_file.writelines(f'Overall Accuracy For The AGRAWAL Dataset: {ensemble_agrawal_correct / DATASET_SIZE}\n')
+plot_training(ensemble_agrawal_hist, title='Hoeffding Ensemble Classifier And AGRAWAL Dataset')
 
-ensemble_model = EnsembleModel(n_models=9)
-ensemble_elec_correct = 0
-ensemble_elec_hist = []
+# ELECTRICITY DATASET
+ensemble_model = EnsembleModel(n_models=3)
 for i in range(20):
     start_index = i * (ELEC_DATASET_SIZE // 20)
     end_index = (i + 1) * (ELEC_DATASET_SIZE // 20) if i < 19 else ELEC_DATASET_SIZE
@@ -149,9 +166,34 @@ for i in range(20):
     y_pred = ensemble_model.predict(X)
     acc = accuracy_score(y, y_pred)
     ensemble_elec_correct += np.sum(y == y_pred)
+
+    # Report and cache
     print(f'Accuracy of Electricity Dataset Batch {i + 1}: {acc}')
     ensemble_elec_hist.append(acc)
-    ensemble_model.partial_fit(X, y, np.where(y_pred == y, 0, 1))'''
+    ensemble_model.partial_fit(X, y, np.where(y_pred == y, 0, 1))
+print(f'Overall Accuracy For The Electricity Dataset: {ensemble_elec_correct / ELEC_DATASET_SIZE}')
+ensemble_file.writelines(f'Overall Accuracy For The Electricity Dataset: {ensemble_elec_correct / ELEC_DATASET_SIZE}\n')
+plot_training(ensemble_elec_hist, title='Hoeffding Ensemble Classifier And Electricity Dataset')
+
+# SPAM DATASET
+ensemble_model = EnsembleModel(n_models=3)
+for i in range(20):
+    start_index = i * (SPAM_DATASET_SIZE // 20)
+    end_index = (i + 1) * (SPAM_DATASET_SIZE // 20) if i < 19 else SPAM_DATASET_SIZE
+    X, y = spamData[start_index : end_index, :], spamLabels[start_index : end_index]
+    y_pred = ensemble_model.predict(X)
+    acc = accuracy_score(y, y_pred)
+    ensemble_spam_correct += np.sum(y == y_pred)
+
+    # Report and cache
+    print(f'Accuracy of Spam Dataset Batch {i + 1}: {acc}')
+    ensemble_spam_hist.append(acc)
+    ensemble_model.partial_fit(X, y, np.where(y_pred == y, 0, 1))
+print(f'Overall Accuracy For The Spam Dataset: {ensemble_spam_correct / SPAM_DATASET_SIZE}')
+ensemble_file.writelines(f'Overall Accuracy For The Spam Dataset: {ensemble_spam_correct / SPAM_DATASET_SIZE}\n')
+plot_training(ensemble_spam_hist, title='Hoeffding Ensemble Classifier And Spam Dataset')
+
+plot_all_datasets(ensemble_sea_hist, ensemble_agrawal_hist, ensemble_elec_hist, ensemble_spam_hist, title="Hoeffding Ensemble Classifier")
 
 '''
 AdaptiveRandomForestClassifier
@@ -253,6 +295,7 @@ plot_all_datasets(arf_sea_hist, arf_agrawal_hist, arf_elec_hist, arf_spam_hist, 
 '''
 SAMKNNClassifier
 '''
+'''
 print('============================')
 sam_sea_hist = []
 sam_sea_correct = 0
@@ -344,7 +387,7 @@ print(f'Overall Accuracy For The Spam Dataset: {sam_spam_correct / SPAM_DATASET_
 sam_file.writelines(f'Overall Accuracy For The Spam Dataset: {sam_spam_correct / SPAM_DATASET_SIZE}\n')
 plot_training(sam_spam_hist, title='SAMKNN Classifier And Spam Dataset')
 
-plot_all_datasets(sam_sea_hist, sam_agrawal_hist, sam_elec_hist, sam_spam_hist, title="SAMKNN Classifier")
+plot_all_datasets(sam_sea_hist, sam_agrawal_hist, sam_elec_hist, sam_spam_hist, title="SAMKNN Classifier")'''
 
 '''
 StreamingRandomPatchesClassifier
@@ -361,7 +404,7 @@ srp_elec_hist = []
 srp_elec_correct = 0
 srp_file = open(path.join('plot', 'srp.txt'), 'w')
 
-srp = StreamingRandomPatchesClassifier(random_state=2023, n_estimators=10)
+srp = StreamingRandomPatchesClassifier(random_state=2023, subspace_mode='m', n_estimators=10)
 for i in range(20):
     X, y = seaData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], seaLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
     y_pred = srp.predict(X)
@@ -375,12 +418,12 @@ for i in range(20):
         start_index = j * (len(X) // 5)
         end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
         X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
-        srp.partial_fit(X_cur, y_cur)
+        srp.partial_fit(X_cur, y_cur, classes=np.array([0, 1]))
 print(f'Overall Accuracy For The SEA Dataset: {srp_sea_correct / DATASET_SIZE}')
 srp_file.writelines(f'Overall Accuracy For The SEA Dataset: {srp_sea_correct / DATASET_SIZE}\n')
 plot_training(srp_sea_hist, title='StreamingRandomPatches Classifier And SEA Dataset')
 
-srp = StreamingRandomPatchesClassifier(random_state=2023, n_estimators=10)
+srp = StreamingRandomPatchesClassifier(random_state=2023, subspace_mode='m', n_estimators=10)
 for i in range(20):
     X, y = agrawalData[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20), :], agrawalLabels[i * (DATASET_SIZE // 20):(i + 1) * (DATASET_SIZE // 20)]
     y_pred = srp.predict(X)
@@ -394,12 +437,12 @@ for i in range(20):
         start_index = j * (len(X) // 5)
         end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
         X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
-        srp.partial_fit(X_cur, y_cur)
+        srp.partial_fit(X_cur, y_cur, classes=np.array([0, 1]))
 print(f'Overall Accuracy For The AGRAWAL Dataset: {srp_agrawal_correct / DATASET_SIZE}')
 srp_file.writelines(f'Overall Accuracy For The AGRAWAL Dataset: {srp_agrawal_correct / DATASET_SIZE}\n')
 plot_training(srp_agrawal_hist, title='StreamingRandomPatches Classifier And AGRAWAL Dataset')
 
-srp = StreamingRandomPatchesClassifier(random_state=2023, n_estimators=10)
+srp = StreamingRandomPatchesClassifier(random_state=2023, subspace_mode='sqrtM1', n_estimators=10)
 for i in range(20):
     start_index = i * (ELEC_DATASET_SIZE // 20)
     end_index = (i + 1) * (ELEC_DATASET_SIZE // 20) if i < 19 else ELEC_DATASET_SIZE
@@ -415,12 +458,12 @@ for i in range(20):
         start_index = j * (len(X) // 5)
         end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
         X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
-        srp.partial_fit(X_cur, y_cur)
+        srp.partial_fit(X_cur, y_cur, classes=np.array([0, 1]))
 print(f'Overall Accuracy For The Electricity Dataset: {srp_elec_correct / ELEC_DATASET_SIZE}')
 srp_file.writelines(f'Overall Accuracy For The Electricity Dataset: {srp_elec_correct / ELEC_DATASET_SIZE}\n')
 plot_training(srp_elec_hist, title='StreamingRandomPatches Classifier And Electricity Dataset')
 
-srp = StreamingRandomPatchesClassifier(random_state=2023, n_estimators=10)
+srp = StreamingRandomPatchesClassifier(random_state=2023, subspace_mode='sqrtM1', n_estimators=10)
 for i in range(20):
     start_index = i * (SPAM_DATASET_SIZE // 20)
     end_index = (i + 1) * (SPAM_DATASET_SIZE // 20) if i < 19 else SPAM_DATASET_SIZE
@@ -436,13 +479,16 @@ for i in range(20):
         start_index = j * (len(X) // 5)
         end_index = (j + 1) * (len(X) // 5) if j < 4 else len(X)
         X_cur, y_cur = X[start_index : end_index, :], y[start_index : end_index]
-        srp.partial_fit(X_cur, y_cur)
+        srp.partial_fit(X_cur, y_cur, classes=np.array([0, 1]))
 print(f'Overall Accuracy For The Spam Dataset: {srp_spam_correct / SPAM_DATASET_SIZE}')
 srp_file.writelines(f'Overall Accuracy For The Spam Dataset: {srp_spam_correct / SPAM_DATASET_SIZE}\n')
-plot_training(srp_spam_hist, title='StreamingRandomPatches Classifier And Spam Dataset')'''
+plot_training(srp_spam_hist, title='StreamingRandomPatches Classifier And Spam Dataset')
+
+plot_all_datasets(srp_sea_hist, srp_agrawal_hist, srp_elec_hist, srp_spam_hist, title="StreamingRandomPatches Classifier")'''
 
 '''
 DynamicWeightedMajorityClassifier
+'''
 '''
 print('============================')
 dwm_sea_hist = []
@@ -535,7 +581,7 @@ print(f'Overall Accuracy For The Spam Dataset: {dwm_spam_correct / SPAM_DATASET_
 dwm_file.writelines(f'Overall Accuracy For The Spam Dataset: {dwm_spam_correct / SPAM_DATASET_SIZE}\n')
 plot_training(dwm_spam_hist, title='DynamicWeightedMajority Classifier And Spam Dataset')
 
-plot_all_datasets(dwm_sea_hist, dwm_agrawal_hist, dwm_elec_hist, dwm_spam_hist, title="DynamicWeightedMajority Classifier")
+plot_all_datasets(dwm_sea_hist, dwm_agrawal_hist, dwm_elec_hist, dwm_spam_hist, title="DynamicWeightedMajority Classifier")'''
 
 '''
 # Plot all
