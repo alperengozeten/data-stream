@@ -1,3 +1,4 @@
+import os
 import pickle
 import numpy as np
 import pandas as pd
@@ -26,10 +27,6 @@ agrawalConceptDriftStream2 = ConceptDriftStream(stream=AGRAWALGenerator(random_s
 agrawalConceptDriftStream = ConceptDriftStream(stream=agrawalConceptDriftStream1, drift_stream=agrawalConceptDriftStream2, position=50000, random_state=2023)
 agrawalBatch = agrawalConceptDriftStream.next_sample(DATASET_SIZE)
 
-with open(path.join('data', agrawal_file_name), 'wb') as file:
-    pickle.dump(agrawalBatch, file)
-    print(f'AGRAWAL Dataset saved to "{agrawal_file_name}"')
-
 # SEA Stream With 3 Concept Drifts 
 seaConceptDriftStream1 = ConceptDriftStream(stream=SEAGenerator(random_state=2023, classification_function=0), 
                                         drift_stream=SEAGenerator(random_state=2023, classification_function=1), position=25000)
@@ -39,15 +36,24 @@ seaConceptDriftStream = ConceptDriftStream(stream=seaConceptDriftStream1,
                                         drift_stream=seaConceptDriftStream2, position=50000, random_state=2023)
 seaBatch = seaConceptDriftStream.next_sample(DATASET_SIZE)
 
-with open(path.join('data', sea_file_name), 'wb') as file:
-    pickle.dump(seaBatch, file)
-    print(f'SEA Dataset saved to "{sea_file_name}"')
+if os.path.exists(path.join('data', sea_file_name)):
+    with open(path.join('data', sea_file_name), 'rb') as file:
+        seaBatch = pickle.load(file)
+        print(f'SEA Dataset Has Been Loaded!')
+else:
+    with open(path.join('data', sea_file_name), 'wb') as file:
+        pickle.dump(seaBatch, file)
+        print(f'SEA Dataset saved to "{sea_file_name}"')
 
-with open(path.join('data', agrawal_file_name), 'rb') as file:
-    agrawalBatch = pickle.load(file)
+if os.path.exists(path.join('data', agrawal_file_name)):
+    with open(path.join('data', agrawal_file_name), 'rb') as file:
+        agrawalBatch = pickle.load(file)
+        print(f'AGRAWAL Dataset Has Been Loaded!')
+else:
+    with open(path.join('data', agrawal_file_name), 'wb') as file:
+        pickle.dump(agrawalBatch, file)
+        print(f'AGRAWAL Dataset saved to "{agrawal_file_name}"')
 
-with open(path.join('data', sea_file_name), 'rb') as file:
-    seaBatch = pickle.load(file)
 
 print(agrawalBatch[0].shape)
 print(seaBatch[0].shape)
