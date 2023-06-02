@@ -84,7 +84,7 @@ print(elecLabels.shape)
 batchList = [k for k in range(1, 21)]
 def plot_training(hist, title='Prequential Accuracy vs Iterations'):
     plt.figure(figsize=(18, 12))
-    plt.xlabel('Prequential Accuracy')
+    plt.xlabel('Prequential Iterations')
     plt.ylabel('Prequential Accuracy')
     plt.xticks(batchList)
     plt.plot(batchList, hist, label='Prequential Accuracy')
@@ -95,7 +95,7 @@ def plot_training(hist, title='Prequential Accuracy vs Iterations'):
 
 def plot_all_datasets(sea_hist, agrawal_hist, elec_hist, spam_hist, title='Prequential Accuracy vs Iterations'):
     plt.figure(figsize=(18, 12))
-    plt.xlabel('Prequential Accuracy')
+    plt.xlabel('Prequential Iterations')
     plt.ylabel('Prequential Accuracy')
     plt.xticks(batchList)
     plt.plot(batchList, sea_hist, label='SEA')
@@ -155,6 +155,7 @@ for i in range(20):
 
 '''
 AdaptiveRandomForestClassifier
+'''
 '''
 print('============================')
 arf_sea_hist = []
@@ -247,7 +248,7 @@ print(f'Overall Accuracy For The Spam Dataset: {arf_spam_correct / SPAM_DATASET_
 arf_file.writelines(f'Overall Accuracy For The Spam Dataset: {arf_spam_correct / SPAM_DATASET_SIZE}\n')
 plot_training(arf_spam_hist, title='ARF Classifier And Spam Dataset')
 
-plot_all_datasets(arf_sea_hist, arf_agrawal_hist, arf_elec_hist, arf_spam_hist, title="Adaptive Random Forest Classifier")
+plot_all_datasets(arf_sea_hist, arf_agrawal_hist, arf_elec_hist, arf_spam_hist, title="Adaptive Random Forest Classifier")'''
 
 '''
 SAMKNNClassifier
@@ -343,10 +344,11 @@ print(f'Overall Accuracy For The Spam Dataset: {sam_spam_correct / SPAM_DATASET_
 sam_file.writelines(f'Overall Accuracy For The Spam Dataset: {sam_spam_correct / SPAM_DATASET_SIZE}\n')
 plot_training(sam_spam_hist, title='SAMKNN Classifier And Spam Dataset')
 
-plot_all_datasets(sam_sea_hist, sam_agrawal_hist, sam_elec_hist, sam_spam_hist, title="SAMKNN Forest Classifier")
+plot_all_datasets(sam_sea_hist, sam_agrawal_hist, sam_elec_hist, sam_spam_hist, title="SAMKNN Classifier")
 
 '''
 StreamingRandomPatchesClassifier
+'''
 '''
 print('============================')
 srp_sea_hist = []
@@ -437,7 +439,7 @@ for i in range(20):
         srp.partial_fit(X_cur, y_cur)
 print(f'Overall Accuracy For The Spam Dataset: {srp_spam_correct / SPAM_DATASET_SIZE}')
 srp_file.writelines(f'Overall Accuracy For The Spam Dataset: {srp_spam_correct / SPAM_DATASET_SIZE}\n')
-plot_training(srp_spam_hist, title='StreamingRandomPatches Classifier And Spam Dataset')
+plot_training(srp_spam_hist, title='StreamingRandomPatches Classifier And Spam Dataset')'''
 
 '''
 DynamicWeightedMajorityClassifier
@@ -533,6 +535,9 @@ print(f'Overall Accuracy For The Spam Dataset: {dwm_spam_correct / SPAM_DATASET_
 dwm_file.writelines(f'Overall Accuracy For The Spam Dataset: {dwm_spam_correct / SPAM_DATASET_SIZE}\n')
 plot_training(dwm_spam_hist, title='DynamicWeightedMajority Classifier And Spam Dataset')
 
+plot_all_datasets(dwm_sea_hist, dwm_agrawal_hist, dwm_elec_hist, dwm_spam_hist, title="DynamicWeightedMajority Classifier")
+
+'''
 # Plot all
 plot_training(arf_sea_hist, title='ARF Classifier And SEA Dataset')
 plot_training(arf_agrawal_hist, title='ARF Classifier And AGRAWAL Dataset')
@@ -552,4 +557,4 @@ plot_training(srp_spam_hist, title='StreamingRandomPatches Classifier And Spam D
 plot_training(dwm_sea_hist, title='DynamicWeightedMajority Classifier And SEA Dataset')
 plot_training(dwm_agrawal_hist, title='DynamicWeightedMajority Classifier And AGRAWAL Dataset')
 plot_training(dwm_elec_hist, title='DynamicWeightedMajority Classifier And Electricity Dataset')
-plot_training(dwm_spam_hist, title='DynamicWeightedMajority Classifier And Spam Dataset')
+plot_training(dwm_spam_hist, title='DynamicWeightedMajority Classifier And Spam Dataset')'''
