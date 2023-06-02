@@ -122,7 +122,7 @@ ensemble_elec_correct = 0
 ensemble_file = open(path.join('plot', 'ensemble.txt'), 'w')
 
 # SEA DATASET
-ensemble_model = EnsembleModel(n_models=3)
+ensemble_model = EnsembleModel(n_models=5)
 for i in range(20):
     start_index = i * (DATASET_SIZE // 20)
     end_index = (i + 1) * (DATASET_SIZE // 20) if i < 19 else DATASET_SIZE
@@ -140,7 +140,7 @@ ensemble_file.writelines(f'Overall Accuracy For The SEA Dataset: {ensemble_sea_c
 plot_training(ensemble_sea_hist, title='Hoeffding Ensemble Classifier And SEA Dataset')
 
 # AGRAWAL DATASET
-ensemble_model = EnsembleModel(n_models=3)
+ensemble_model = EnsembleModel(n_models=5)
 for i in range(20):
     start_index = i * (DATASET_SIZE // 20)
     end_index = (i + 1) * (DATASET_SIZE // 20) if i < 19 else DATASET_SIZE
@@ -158,7 +158,7 @@ ensemble_file.writelines(f'Overall Accuracy For The AGRAWAL Dataset: {ensemble_a
 plot_training(ensemble_agrawal_hist, title='Hoeffding Ensemble Classifier And AGRAWAL Dataset')
 
 # ELECTRICITY DATASET
-ensemble_model = EnsembleModel(n_models=3)
+ensemble_model = EnsembleModel(n_models=5)
 for i in range(20):
     start_index = i * (ELEC_DATASET_SIZE // 20)
     end_index = (i + 1) * (ELEC_DATASET_SIZE // 20) if i < 19 else ELEC_DATASET_SIZE
@@ -176,7 +176,7 @@ ensemble_file.writelines(f'Overall Accuracy For The Electricity Dataset: {ensemb
 plot_training(ensemble_elec_hist, title='Hoeffding Ensemble Classifier And Electricity Dataset')
 
 # SPAM DATASET
-ensemble_model = EnsembleModel(n_models=3)
+ensemble_model = EnsembleModel(n_models=5)
 for i in range(20):
     start_index = i * (SPAM_DATASET_SIZE // 20)
     end_index = (i + 1) * (SPAM_DATASET_SIZE // 20) if i < 19 else SPAM_DATASET_SIZE
@@ -197,7 +197,6 @@ plot_all_datasets(ensemble_sea_hist, ensemble_agrawal_hist, ensemble_elec_hist, 
 
 '''
 AdaptiveRandomForestClassifier
-'''
 '''
 print('============================')
 arf_sea_hist = []
@@ -290,11 +289,10 @@ print(f'Overall Accuracy For The Spam Dataset: {arf_spam_correct / SPAM_DATASET_
 arf_file.writelines(f'Overall Accuracy For The Spam Dataset: {arf_spam_correct / SPAM_DATASET_SIZE}\n')
 plot_training(arf_spam_hist, title='ARF Classifier And Spam Dataset')
 
-plot_all_datasets(arf_sea_hist, arf_agrawal_hist, arf_elec_hist, arf_spam_hist, title="Adaptive Random Forest Classifier")'''
+plot_all_datasets(arf_sea_hist, arf_agrawal_hist, arf_elec_hist, arf_spam_hist, title="Adaptive Random Forest Classifier")
 
 '''
 SAMKNNClassifier
-'''
 '''
 print('============================')
 sam_sea_hist = []
@@ -387,11 +385,10 @@ print(f'Overall Accuracy For The Spam Dataset: {sam_spam_correct / SPAM_DATASET_
 sam_file.writelines(f'Overall Accuracy For The Spam Dataset: {sam_spam_correct / SPAM_DATASET_SIZE}\n')
 plot_training(sam_spam_hist, title='SAMKNN Classifier And Spam Dataset')
 
-plot_all_datasets(sam_sea_hist, sam_agrawal_hist, sam_elec_hist, sam_spam_hist, title="SAMKNN Classifier")'''
+plot_all_datasets(sam_sea_hist, sam_agrawal_hist, sam_elec_hist, sam_spam_hist, title="SAMKNN Classifier")
 
 '''
 StreamingRandomPatchesClassifier
-'''
 '''
 print('============================')
 srp_sea_hist = []
@@ -484,11 +481,10 @@ print(f'Overall Accuracy For The Spam Dataset: {srp_spam_correct / SPAM_DATASET_
 srp_file.writelines(f'Overall Accuracy For The Spam Dataset: {srp_spam_correct / SPAM_DATASET_SIZE}\n')
 plot_training(srp_spam_hist, title='StreamingRandomPatches Classifier And Spam Dataset')
 
-plot_all_datasets(srp_sea_hist, srp_agrawal_hist, srp_elec_hist, srp_spam_hist, title="StreamingRandomPatches Classifier")'''
+plot_all_datasets(srp_sea_hist, srp_agrawal_hist, srp_elec_hist, srp_spam_hist, title="StreamingRandomPatches Classifier")
 
 '''
 DynamicWeightedMajorityClassifier
-'''
 '''
 print('============================')
 dwm_sea_hist = []
@@ -581,7 +577,7 @@ print(f'Overall Accuracy For The Spam Dataset: {dwm_spam_correct / SPAM_DATASET_
 dwm_file.writelines(f'Overall Accuracy For The Spam Dataset: {dwm_spam_correct / SPAM_DATASET_SIZE}\n')
 plot_training(dwm_spam_hist, title='DynamicWeightedMajority Classifier And Spam Dataset')
 
-plot_all_datasets(dwm_sea_hist, dwm_agrawal_hist, dwm_elec_hist, dwm_spam_hist, title="DynamicWeightedMajority Classifier")'''
+plot_all_datasets(dwm_sea_hist, dwm_agrawal_hist, dwm_elec_hist, dwm_spam_hist, title="DynamicWeightedMajority Classifier")
 
 '''
 # Plot all
