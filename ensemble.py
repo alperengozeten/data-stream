@@ -4,9 +4,9 @@ from skmultiflow.drift_detection import DDM
 from skmultiflow.drift_detection.hddm_w import HDDM_W
 
 class EnsembleModel:
-    def __init__(self, n_models):
+    def __init__(self, n_models, min_num_instances=5000, out_control_level=3):
         self.n_models = n_models
-        self.ddm = DDM(min_num_instances=5000, out_control_level=3)
+        self.ddm = DDM(min_num_instances=min_num_instances, out_control_level=out_control_level)
         self.models = []
         for i in range(n_models):
             self.models.append(HoeffdingTreeClassifier())
@@ -23,10 +23,16 @@ class EnsembleModel:
     def partial_fit(self, X: np.ndarray, y: np.ndarray, y_error : np.ndarray):
         DATASET_SIZE = len(X)
         
+        detected_drift = False
         for i in range(len(y_error)):
             self.ddm.add_element(y_error[i])
             if self.ddm.detected_change():
                 print("detected")
+                detected_drift = True
+        
+        if detected_drift:
+            self.models.append(HoeffdingTreeClassifier()) # append a new model
+            self.n_models += 1
 
         for i in range(self.n_models):
             start_index = i * (DATASET_SIZE // self.n_models)
